@@ -99,6 +99,10 @@
 			removeNode: $.proxy(this.removeNode, this),
 			updateNode: $.proxy(this.updateNode, this),
 
+			// 删除节点方法
+			deleteNode: $.proxy(this.deleteNode, this),
+			deleteChildrenNode: $.proxy(this.deleteChildrenNode, this),
+
 
 
 			// Options (public access)
@@ -186,11 +190,7 @@
 		this.setInitialStates({ nodes: this.tree }, 0);
 		this.render();
 	};
-	/**
-	 Removes given nodes from the tree.
-	 @param {Array} nodes  - An array of nodes to remove
-	 @param {optional Object} options
-	 */
+
 
 
 
@@ -201,9 +201,49 @@
 		};
 	};
 
+	/**
+	 * 删除节点，若是根节点不能删除
+	 * 获取节点的父节点,
+	 * 根据Id删除父节点nodes集合中的自己
+	 * 刷新父节点
+	 * @param identifiers
+	 * @param options
+	 */
+	Tree.prototype.deleteNode = function (identifiers, options) {
+		this.forEachIdentifier(identifiers, options, $.proxy(function (node, options) {
 
+			var parentNode = this.getParent(node);
 
+			if(parentNode && parentNode.nodes != null ){
+				for(var i = parentNode.nodes.length-1; i >= 0; i--){
+					if(parentNode.nodes[i].nodeId == node.nodeId){
+						parentNode.nodes.splice(i, 1);
+					}
+				}
+				this.setInitialStates({ nodes: this.tree }, 0);
+				this.render();
 
+			}else{
+				console.log('根节点不能删除');
+			}
+		}, this));
+	};
+
+	/**
+	 * 删除子节点
+	 * 置空子节点 刷新节点
+	 * @param node
+	 * @param options
+	 */
+	Tree.prototype.deleteChildrenNode = function (identifiers, options) {
+		this.forEachIdentifier(identifiers, options, $.proxy(function (node, options) {
+			if ( node.nodes != null){
+				node.nodes = null;
+				this.setInitialStates({ nodes: this.tree }, 0);
+				this.render();
+			}
+		}, this));
+	};
 
 	Tree.prototype.remove = function () {
 		this.destroy();
