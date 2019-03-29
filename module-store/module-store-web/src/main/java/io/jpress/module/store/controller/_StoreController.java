@@ -40,6 +40,7 @@ public class _StoreController  extends AdminControllerBase {
 
     @AdminMenu(text = "商品列表",groupId = "store" ,order =0)
     public void storeList(){
+        LOGGER.info("Text===========================================");
 
 
 //        String title = getPara(0) != null ? getPara(0) : getPara("title");
